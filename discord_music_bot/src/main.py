@@ -1,8 +1,8 @@
 import discord 
 from discord.ext import commands
 
-from music_cog import music 
-from help_cog import help 
+from music_cog import music_cog
+from help_cog import help_cog
 
 bot = commands.Bot(commands_prefix="!")
 
