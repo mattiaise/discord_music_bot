@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands 
-
-from youtube_dl import YoutubeDL
+import yt_dlp
 
 class music_cog(commands.Cog):
     def __init__(self, bot):
@@ -11,13 +10,15 @@ class music_cog(commands.Cog):
         self.is_paused = False
 
         self.music_queue = []
+        
+        # credo che il problema stia qui (ydl options)
         self.YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
         self.FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
         self.vc = None
 
     def search_yt(self, item):
-        with YoutubeDL(self.YDL_OPTIONS) as ydl:
+        with yt_dlp.YoutubeDL(self.YDL_OPTIONS) as ydl:
             try:
                 info = ydl.extract_info("ytsearch:%s" % item, download=False)['entries'][0]
             except Exception:

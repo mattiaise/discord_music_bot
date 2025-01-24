@@ -5,15 +5,15 @@ class help_cog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         
-        self.help_message = """        
-'''
+        self.help_message = f"""        
+```
 General commands:
 !help - displays all the available commands
-!play <keyword> - finds the song on youtube and plays it in your current channel. Will resume playing the current song if it was paused
+!play <URL> - finds the song on youtube and plays it in your current channel.
 !skip - skips the current song being played
 !pause - pauses the current song being played or resumes if already paused
 !leave - disconnect the bot from the voice channel
-'''        
+```        
 """
 
         self.text_channel_text = []
@@ -27,7 +27,8 @@ General commands:
         await self.send_to_all(self.help_message)
         
     async def send_to_all(self, msg):
-        for text_channel in  self.text_channel_text:
+        for text_channel in self.text_channel_text:
+            # print(text_channel)
             await text_channel.send(msg)
             
     @commands.command(name="help", help="Displays all the available commands")
