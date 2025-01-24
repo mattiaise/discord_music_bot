@@ -3,4 +3,4 @@ https://github.com/pawel02/music_bot
 
 API: 
 https://discordpy.readthedocs.io/en/stable/api.html
-https://youtube-dl-api-server.readthedocs.io/en/latest/api.html
+https://youtube-dl-api-server.readthedocs.io/en/latest/api.html (deprecated)
