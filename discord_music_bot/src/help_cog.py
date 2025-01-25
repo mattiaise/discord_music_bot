@@ -4,19 +4,18 @@ from discord.ext import commands
 class help_cog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
+        self.text_channel_text = []
         self.help_message = f"""        
 ```
 General commands:
 !help - displays all the available commands
 !play <URL> - finds the song on youtube and plays it in your current channel.
+!playlist - finds on youtube and plays the songs from the default playlist.
 !skip - skips the current song being played
 !pause - pauses the current song being played or resumes if already paused
 !leave - disconnect the bot from the voice channel
 ```        
 """
-
-        self.text_channel_text = []
         
     @commands.Cog.listener()
     async def on_ready(self):

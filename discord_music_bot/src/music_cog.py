@@ -11,7 +11,6 @@ class music_cog(commands.Cog):
 
         self.music_queue = []
         
-        # credo che il problema stia qui (ydl options)
         self.YDL_OPTIONS = {
             'format': 'bestaudio/best',
             'noplaylist': True,    
@@ -66,7 +65,7 @@ class music_cog(commands.Cog):
         else: 
             self.is_playing = False
             
-    @commands.command(name="play", aliases=["p", "playing"], help="Play the selected song from youtube")
+    @commands.command(name="play", aliases=["p", "playing"], help="Plays the selected song from youtube")
     async def play(self, ctx, *args):
         query = " ".join(args)
         
@@ -86,7 +85,7 @@ class music_cog(commands.Cog):
                 if self.is_playing == False:
                     await self.play_music(ctx)
                     
-    @commands.command(name="pause", aliases=["ps", "resume", "r"], help="Pauses or resumes the current song being played")
+    @commands.command(name="pause", aliases=["ps", "resume", "r", "stop"], help="Pauses or resumes the current song being played")
     async def pause(self, ctx, *args):
         if self.is_playing:
             self.is_playing = False
@@ -109,7 +108,7 @@ class music_cog(commands.Cog):
         self.is_paused = False
         await self.vc.disconnect()
         
-    @commands.command(name="playlist", aliases=["pp"], help="Play the default playlist")
+    @commands.command(name="playlist", aliases=["pp"], help="Plays the default playlist")
     async def playlist(self, ctx, *args):
         voice_channel = ctx.author.voice.channel
         file_path = "./../songs.txt"
