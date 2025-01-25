@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands 
 import yt_dlp
+import time
 
 class music_cog(commands.Cog):
     def __init__(self, bot):
@@ -106,6 +107,7 @@ class music_cog(commands.Cog):
     async def leave(self, ctx, *args):
         self.is_playing = False
         self.is_paused = False
+        self.music_queue.clear()
         await self.vc.disconnect()
         
     @commands.command(name="playlist", aliases=["pp"], help="Plays the default playlist")
@@ -113,10 +115,13 @@ class music_cog(commands.Cog):
         voice_channel = ctx.author.voice.channel
         file_path = "./../songs.txt"
         with open(file_path, "r", encoding="utf-8") as file:
-            for url in file:
+            while True: 
+                url = file.readline()
+                if None or not url:
+                    break
+
                 song = self.search_yt(url.strip())
                 self.music_queue.append([song, voice_channel])
         
         if self.is_playing == False:
             await self.play_music(ctx)
-                
