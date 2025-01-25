@@ -12,18 +12,26 @@ class music_cog(commands.Cog):
         self.music_queue = []
         
         # credo che il problema stia qui (ydl options)
-        self.YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
-        self.FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+        self.YDL_OPTIONS = {
+            'format': 'bestaudio/best',
+            'noplaylist': True,    
+            'quiet': True,           
+            'extract_flat': True,      
+            }
+        self.FFMPEG_OPTIONS = {
+            'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+            'options': '-vn'
+            }
 
         self.vc = None
 
     def search_yt(self, item):
         with yt_dlp.YoutubeDL(self.YDL_OPTIONS) as ydl:
             try:
-                info = ydl.extract_info("ytsearch:%s" % item, download=False)['entries'][0]
+                info = ydl.extract_info(item, download=False)
             except Exception:
                 return False
-        return {'source': info['formats'[0]['url']], 'title': info['title']}
+        return {'source': info['url'], 'title': info['title']}
     
     def play_next(self): 
         if len(self.music_queue) > 0:
@@ -100,3 +108,16 @@ class music_cog(commands.Cog):
         self.is_playing = False
         self.is_paused = False
         await self.vc.disconnect()
+        
+    @commands.command(name="playlist", aliases=["pp"], help="Play the default playlist")
+    async def playlist(self, ctx, *args):
+        voice_channel = ctx.author.voice.channel
+        file_path = "./../songs.txt"
+        with open(file_path, "r", encoding="utf-8") as file:
+            for url in file:
+                song = self.search_yt(url.strip())
+                self.music_queue.append([song, voice_channel])
+        
+        if self.is_playing == False:
+            await self.play_music(ctx)
+                
