@@ -28,7 +28,8 @@ class music_cog(commands.Cog):
     def search_yt(self, item):
         with yt_dlp.YoutubeDL(self.YDL_OPTIONS) as ydl:
             try:
-                info = ydl.extract_info(item, download=False)
+                info = ydl.sanitize_info(
+                    ydl.extract_info(item, download=False))
             except Exception:
                 return False
         return {'source': info['url'], 'title': info['title']}
@@ -115,13 +116,9 @@ class music_cog(commands.Cog):
         voice_channel = ctx.author.voice.channel
         file_path = "./../songs.txt"
         with open(file_path, "r", encoding="utf-8") as file:
-            while True: 
-                url = file.readline()
-                if None or not url:
-                    break
-
+            for url in file:
                 song = self.search_yt(url.strip())
                 self.music_queue.append([song, voice_channel])
-        
+                
         if self.is_playing == False:
             await self.play_music(ctx)
