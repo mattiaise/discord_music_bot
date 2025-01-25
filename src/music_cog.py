@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands 
 import yt_dlp
-import time
 
 class music_cog(commands.Cog):
     def __init__(self, bot):
