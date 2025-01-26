@@ -22,13 +22,11 @@ General commands:
         for guild in self.bot.guilds:
             for channel in guild.text_channels:
                 if channel.name == "bot-commands":
-                    self.text_channel_text.append(channel)
-                
+                    self.text_channel_text.append(channel)                
         await self.send_to_all(self.help_message)
         
     async def send_to_all(self, msg):
         for text_channel in self.text_channel_text:
-
             await text_channel.send(msg)
             
     @commands.command(name="help", help="Displays all the available commands")
