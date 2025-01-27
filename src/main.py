@@ -10,6 +10,12 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 bot.remove_command('help')
 
+@bot.event
+async def on_ready():
+    print(f"Bot online come {bot.user}")
+    activity = discord.Activity(type=discord.ActivityType.watching, name="dei nani")
+    await bot.change_presence(status=discord.Status.online, activity=activity)
+
 async def main():
     async with bot:
         await bot.add_cog(help_cog(bot))
