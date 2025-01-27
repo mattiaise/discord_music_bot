@@ -1,8 +1,6 @@
 import discord
 from discord.ext import commands 
 import yt_dlp
-from youtubesearchpython import VideosSearch
-from yt_dlp import YoutubeDL
 
 class music_cog(commands.Cog):
     def __init__(self, bot):
