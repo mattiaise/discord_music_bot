@@ -13,7 +13,7 @@ bot.remove_command('help')
 @bot.event
 async def on_ready():
     print(f"Bot online come {bot.user}")
-    activity = discord.Activity(type=discord.ActivityType.watching, name="delle uova")
+    activity = discord.Activity(type=discord.ActivityType.listening, name="delle uova")
     await bot.change_presence(status=discord.Status.online, activity=activity)
 
 async def main():
