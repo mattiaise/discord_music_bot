@@ -99,7 +99,7 @@ class music_cog(commands.Cog):
     @commands.command(name="playlist", aliases=["pp"], help="Plays the default playlist")
     async def playlist(self, ctx, *args):
         voice_channel = ctx.author.voice.channel
-        file_path = "./../songs.txt"
+        file_path = "./../playlists/prepartita.txt" if args == "prepartita" else "./../playlists/triste.txt"
         with open(file_path, "r", encoding="utf-8") as file:
             for url in file:
                 song = self.search_yt(url.strip())
