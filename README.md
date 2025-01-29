@@ -8,6 +8,11 @@ Un bot musicale per Discord che permette agli utenti di riprodurre musica dirett
 - **Comandi semplici:** Interfaccia intuitiva per controllare il bot (play, pause, skip, stop, ecc.).
 - **Prestazioni ottimizzate:** Audio di alta qualità con minima latenza.
 
+## Dipendenze e requisiti
+
+- **Versione di python:** 3.8.* - 3.11.*
+- **Installare le dipendenze:** `pip install -r dependencies.txt`
+
 ## Comandi disponibili 
 
 - `!play <url>`: Riproduce una canzone.
@@ -26,8 +31,10 @@ discord-music-bot
 │   ├── main.py           # File principale del bot
 │   ├── music_cog.py      # File dei comandi
 │   ├── help.cog.py       # File del comando help
+├── playlists
+│   ├── triste.py         # Lista di canzoni tristi
+│   ├── prepartita.py     # Lista di canzoni dance
 ├── dependecies.txt       # File che mostra le dipendenze
-├── songs.txt             # Playlist di default
 ├── token.txt             # Token del bot discord
 └── README.md             # Documentazione
 ```
