@@ -10,7 +10,7 @@ Un bot musicale per Discord che permette agli utenti di riprodurre musica dirett
 
 ## Dipendenze e requisiti
 
-- **Versione di python:** 3.8.* - 3.11.*
+- **Versione di python:** `3.8.* - 3.11.*`
 - **Installare le dipendenze:** `pip install -r dependencies.txt`
 
 ## Comandi disponibili 
