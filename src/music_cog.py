@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import yt_dlp
 import asyncio
+import logging
 
 class music_cog(commands.Cog):
     def __init__(self, bot):
@@ -26,7 +27,8 @@ class music_cog(commands.Cog):
             try:
                 info = ydl.sanitize_info(
                     ydl.extract_info(item, download=False))
-            except Exception:
+            except Exception as e:
+                logging.error(f"Error searching YouTube: {e}")
                 return False
         return {'source': info['url'], 'title': info['title']}
 
@@ -35,15 +37,23 @@ class music_cog(commands.Cog):
             self.is_playing = True
             m_url = self.music_queue[0][0]['source']
             self.music_queue.pop(0)
+            logging.info(f"Playing next song: {m_url}")
             self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
         else:
             self.is_playing = False
+            logging.info("No more songs in the queue.")
 
     async def connect_to_voice(self, ctx, voice_channel):
-        if self.vc is None or not self.vc.is_connected():
-            self.vc = await voice_channel.connect()
-        else:
-            await self.vc.move_to(voice_channel)
+        try:
+            if self.vc is None or not self.vc.is_connected():
+                self.vc = await voice_channel.connect()
+                logging.info(f"Connected to voice channel: {voice_channel.name}")
+            else:
+                await self.vc.move_to(voice_channel)
+                logging.info(f"Moved to voice channel: {voice_channel.name}")
+        except Exception as e:
+            logging.error(f"Error connecting to voice channel: {e}")
+            await ctx.send("Could not connect to the voice channel.")
 
     async def play_music(self, ctx):
         if len(self.music_queue) > 0:
@@ -51,9 +61,11 @@ class music_cog(commands.Cog):
             m_url = self.music_queue[0][0]['source']
             await self.connect_to_voice(ctx, self.music_queue[0][1])
             self.music_queue.pop(0)
+            logging.info(f"Playing music: {m_url}")
             self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
         else:
             self.is_playing = False
+            logging.info("Music queue is empty.")
 
     @commands.command(name="play", aliases=["p", "playing"], help="Plays the selected song from youtube")
     async def play(self, ctx, *args):
@@ -63,6 +75,7 @@ class music_cog(commands.Cog):
             await ctx.send("Connect to a voice channel!")
         elif self.is_paused:
             self.vc.resume()
+            logging.info("Resumed the music.")
         else:
             song = self.search_yt(query)
             if not song:
@@ -70,6 +83,7 @@ class music_cog(commands.Cog):
             else:
                 await ctx.send("Song added to the queue")
                 self.music_queue.append([song, voice_channel])
+                logging.info(f"Added song to queue: {song['title']}")
                 if not self.is_playing:
                     await self.play_music(ctx)
 
@@ -79,15 +93,18 @@ class music_cog(commands.Cog):
             self.is_playing = False
             self.is_paused = True
             self.vc.pause()
+            logging.info("Paused the music.")
         elif self.is_paused:
             self.is_playing = True
             self.is_paused = False
             self.vc.resume()
+            logging.info("Resumed the music.")
 
     @commands.command(name="skip", aliases=["s"], help="Skips the currently played song")
     async def skip(self, ctx, *args):
         if self.vc is not None and self.vc.is_playing():
             self.vc.stop()
+            logging.info("Skipped the current song.")
             await self.play_music(ctx)
 
     @commands.command(name="leave", aliases=["disconnect", "d", "l", "quit"])
@@ -97,6 +114,7 @@ class music_cog(commands.Cog):
         self.music_queue.clear()
         if self.vc is not None:
             await self.vc.disconnect()
+            logging.info("Disconnected from the voice channel.")
 
     async def search_yt_async(self, url):
         return self.search_yt(url.strip())
@@ -105,15 +123,18 @@ class music_cog(commands.Cog):
     async def playlist(self, ctx, *args):
         voice_channel = ctx.author.voice.channel
         file_path = "./../playlists/prepartita.txt" if args == "prepartita" else "./../playlists/triste.txt"
-        with open(file_path, "r", encoding="utf-8") as file:
-            urls = [url.strip() for url in file]
-
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                urls = [url.strip() for url in file]
+        except FileNotFoundError as e:
+            logging.error(f"Playlist file not found: {e}")
+            await ctx.send("Playlist file not found.")
+            return
         tasks = [self.search_yt_async(url) for url in urls]
         songs = await asyncio.gather(*tasks)
-
         for song in songs:
             if song:
                 self.music_queue.append([song, voice_channel])
-
+                logging.info(f"Added song to queue: {song['title']}")
         if not self.is_playing:
             await self.play_music(ctx)
