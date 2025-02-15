@@ -22,4 +22,5 @@ async def main():
         await bot.add_cog(music_cog(bot))
         await bot.start("MTMzMTIzMDUxMTQ1MTg2NTE4OA.GQ0u0A.QfcuIyQxcnMrEFrsTVr6t08F8gYv3WsMKX6CUc")
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
