@@ -130,11 +130,20 @@ class music_cog(commands.Cog):
             logging.error(f"Playlist file not found: {e}")
             await ctx.send("Playlist file not found.")
             return
+
+        # Start playing the first song as soon as it's ready
+        first_song = await self.search_yt_async(urls.pop(0))
+        if first_song:
+            self.music_queue.append([first_song, voice_channel])
+            logging.info(f"Added first song to queue: {first_song['title']}")
+            if not self.is_playing:
+                await self.play_music(ctx)
+
+        # Continue adding the rest of the songs to the queue
         tasks = [self.search_yt_async(url) for url in urls]
         songs = await asyncio.gather(*tasks)
+
         for song in songs:
             if song:
                 self.music_queue.append([song, voice_channel])
                 logging.info(f"Added song to queue: {song['title']}")
-        if not self.is_playing:
-            await self.play_music(ctx)
