@@ -4,6 +4,8 @@ import yt_dlp
 import asyncio
 import logging
 import concurrent.futures
+import collections
+import functools
 
 class music_cog(commands.Cog):
     def __init__(self, bot):
@@ -11,7 +13,7 @@ class music_cog(commands.Cog):
         self.is_playing = False
         self.is_paused = False
         self.vc = None
-        self.music_queue = []
+        self.music_queue = collections.deque()
         self.YDL_OPTIONS = {
             'format': 'bestaudio/best',
             'noplaylist': True,
@@ -23,8 +25,8 @@ class music_cog(commands.Cog):
             'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
             'options': '-vn'
         }
-        # Crea un executor dedicato per le operazioni bloccanti
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
+        self.song_cache = functools.lru_cache(maxsize=100)(self.search_yt)
 
     def search_yt(self, item):
         with yt_dlp.YoutubeDL(self.YDL_OPTIONS) as ydl:
@@ -32,14 +34,14 @@ class music_cog(commands.Cog):
                 info = ydl.sanitize_info(ydl.extract_info(item, download=False))
             except Exception as e:
                 logging.error(f"Error searching YouTube: {e}")
-                return False
+                return None
         return {'source': info['url'], 'title': info['title']}
 
     def play_next(self):
         if self.music_queue:
             self.is_playing = True
             m_url = self.music_queue[0][0]['source']
-            self.music_queue.pop(0)
+            self.music_queue.popleft()
             logging.info(f"Playing next song: {m_url}")
             self.vc.play(
                 discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS),
@@ -66,7 +68,7 @@ class music_cog(commands.Cog):
             self.is_playing = True
             m_url = self.music_queue[0][0]['source']
             await self.connect_to_voice(ctx, self.music_queue[0][1])
-            self.music_queue.pop(0)
+            self.music_queue.popleft()
             logging.info(f"Playing music: {m_url}")
             self.vc.play(
                 discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS),
@@ -83,14 +85,12 @@ class music_cog(commands.Cog):
         if voice_channel is None:
             await ctx.send("Connect to a voice channel!")
             return
-
         if self.is_paused:
             self.vc.resume()
             logging.info("Resumed the music.")
             return
-
         loop = asyncio.get_running_loop()
-        song = await loop.run_in_executor(self.executor, self.search_yt, query)
+        song = await loop.run_in_executor(self.executor, self.song_cache, query)
         if not song:
             await ctx.send("Could not download the song. Incorrect format, try a different keyword")
         else:
@@ -131,6 +131,9 @@ class music_cog(commands.Cog):
 
     @commands.command(name="playlist", aliases=["pp"], help="Plays the default playlist")
     async def playlist(self, ctx, *args):
+        if not ctx.author.voice or not ctx.author.voice.channel:
+            await ctx.send("You need to be connected to a voice channel to use this command.")
+            return
         voice_channel = ctx.author.voice.channel
         file_path = "./../playlists/prepartita.txt" if args == ("prepartita",) else "./../playlists/triste.txt"
         try:
@@ -142,19 +145,24 @@ class music_cog(commands.Cog):
             return
         loop = asyncio.get_running_loop()
         first_url = urls.pop(0)
-        first_song = await loop.run_in_executor(self.executor, self.search_yt, first_url)
+        first_song = await loop.run_in_executor(self.executor, self.song_cache, first_url)
         if first_song:
             self.music_queue.append([first_song, voice_channel])
             logging.info(f"Added first song to queue: {first_song['title']}")
             if not self.is_playing:
                 await self.play_music(ctx)
+        else:
+            await ctx.send("Could not load the first song in the playlist.")
+            return
         semaphore = asyncio.Semaphore(2)
         async def load_song(url):
             async with semaphore:
-                song = await loop.run_in_executor(self.executor, self.search_yt, url)
+                song = await loop.run_in_executor(self.executor, self.song_cache, url)
                 if song:
                     self.music_queue.append([song, voice_channel])
                     logging.info(f"Added song to queue: {song['title']}")
+                else:
+                    logging.error(f"Could not load song: {url}")
         tasks = [load_song(url) for url in urls]
         async def run_tasks():
             await asyncio.gather(*tasks)
