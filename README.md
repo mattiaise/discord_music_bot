@@ -12,6 +12,7 @@ Un bot musicale per Discord che permette agli utenti di riprodurre musica dirett
 
 - **Versione di python:** `3.8.* - 3.11.*`
 - **Installare le dipendenze:** `pip install -r dependencies.txt`
+- **Installare FFMPEG** e inserire la cartella `bin` all'interno delle variabili di ambiente del sistema nella sezione `Path`
 
 ## Comandi disponibili 
 
@@ -35,6 +36,5 @@ discord-music-bot
 │   ├── triste.txt        # Lista di canzoni tristi
 │   ├── prepartita.txt    # Lista di canzoni dance
 ├── dependecies.txt       # File che mostra le dipendenze
-├── token.txt             # Token del bot discord
 └── README.md             # Documentazione
 ```
