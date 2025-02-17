@@ -129,10 +129,6 @@ class music_cog(commands.Cog):
             await self.vc.disconnect()
             logging.info("Disconnected from the voice channel.")
 
-    async def search_yt_async(self, url):
-        loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(self.executor, self.search_yt, url.strip())
-
     @commands.command(name="playlist", aliases=["pp"], help="Plays the default playlist")
     async def playlist(self, ctx, *args):
         voice_channel = ctx.author.voice.channel
