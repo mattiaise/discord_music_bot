@@ -24,6 +24,10 @@ Un bot musicale per Discord che permette agli utenti di riprodurre musica dirett
 - `!playlist`: Riproduce la playlist preimpostata.
 - `!leave`: Fa uscire il bot dal canale vocale.
 
+## Configurazione 
+
+Prima di utilizzare il bot inserire il proprio token all'interno del file `main.py`.
+
 ## Struttura del progetto 
 
 ```
