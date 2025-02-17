@@ -24,7 +24,7 @@ async def main():
     async with bot:
         await bot.add_cog(help_cog(bot))
         await bot.add_cog(music_cog(bot))
-        await bot.start("MTMzMTIzMDUxMTQ1MTg2NTE4OA.GQ0u0A.QfcuIyQxcnMrEFrsTVr6t08F8gYv3WsMKX6CUc")
+        await bot.start("TOKEN")
 
 if __name__ == "__main__":
     try:
