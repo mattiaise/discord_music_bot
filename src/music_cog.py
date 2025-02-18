@@ -118,7 +118,6 @@ class music_cog(commands.Cog):
         if self.vc is not None and self.vc.is_playing():
             self.vc.stop()
             logging.info("Skipped the current song.")
-            await self.play_music(ctx)
 
     @commands.command(name="leave", aliases=["disconnect", "d", "l", "quit"])
     async def leave(self, ctx, *args):
