@@ -69,7 +69,6 @@ class music_cog(commands.Cog):
             m_url = self.music_queue[0][0]['source']
             await self.connect_to_voice(ctx, self.music_queue[0][1])
             self.music_queue.popleft()
-            logging.info(f"Playing music: {m_url}")
             self.vc.play(
                 discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS),
                 after=lambda e: self.play_next()
@@ -134,7 +133,7 @@ class music_cog(commands.Cog):
             await ctx.send("You need to be connected to a voice channel to use this command.")
             return
         voice_channel = ctx.author.voice.channel
-        file_path = "./../playlists/prepartita.txt" if args == ("prepartita",) else "./../playlists/triste.txt"
+        file_path = "./../playlists/playlist.txt"
         try:
             with open(file_path, "r", encoding="utf-8") as file:
                 urls = [url.strip() for url in file if url.strip()]
