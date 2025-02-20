@@ -137,11 +137,12 @@ class music_cog(commands.Cog):
         file_path = "./../playlists/playlist.txt"
         try:
             with open(file_path, "r", encoding="utf-8") as file:
-                urls = random.shuffle([url.strip() for url in file if url.strip()])
+                urls = [url.strip() for url in file if url.strip()]
         except FileNotFoundError as e:
             logging.error(f"Playlist file not found: {e}")
             await ctx.send("Playlist file not found.")
             return
+        random.shuffle(urls)
         loop = asyncio.get_running_loop()
         first_url = urls.pop(0)
         first_song = await loop.run_in_executor(self.executor, self.song_cache, first_url)
