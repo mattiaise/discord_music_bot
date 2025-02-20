@@ -26,7 +26,6 @@ async def main():
         await bot.add_cog(music_cog(bot))
         await bot.start("TOKEN")
 
-
 if __name__ == "__main__":
     try:
         asyncio.run(main())
