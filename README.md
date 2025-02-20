@@ -28,6 +28,8 @@ Un bot musicale per Discord che permette agli utenti di riprodurre musica dirett
 
 Prima di utilizzare il bot inserire il proprio token all'interno del file `main.py`.
 
+Se si ha intezione di usare il comando `!playlist` popolare il file `playlist/playlist.txt` con i link YouTube delle canzoni che si vuole riprodurre (uno per ogni riga). 
+
 ## Struttura del progetto 
 
 ```
@@ -37,8 +39,7 @@ discord-music-bot
 │   ├── music_cog.py      # File dei comandi
 │   ├── help.cog.py       # File del comando help
 ├── playlists
-│   ├── triste.txt        # Lista di canzoni tristi
-│   ├── prepartita.txt    # Lista di canzoni dance
+│   ├── playlist.txt      # Lista di canzoni
 ├── dependecies.txt       # File che mostra le dipendenze
 └── README.md             # Documentazione
 ```
