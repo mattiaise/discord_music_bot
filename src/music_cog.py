@@ -167,4 +167,3 @@ class music_cog(commands.Cog):
         async def run_tasks():
             await asyncio.gather(*tasks)
         asyncio.create_task(run_tasks())
-
