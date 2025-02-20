@@ -39,8 +39,7 @@ discord-music-bot
 │   ├── music_cog.py      # File dei comandi
 │   ├── help.cog.py       # File del comando help
 ├── playlists
-│   ├── triste.txt        # Lista di canzoni tristi
-│   ├── prepartita.txt    # Lista di canzoni dance
+│   ├── playlist.txt      # Lista di canzoni
 ├── dependecies.txt       # File che mostra le dipendenze
 └── README.md             # Documentazione
 ```
