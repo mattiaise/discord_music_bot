@@ -6,6 +6,7 @@ import logging
 import concurrent.futures
 import collections
 import functools
+import random
 
 class music_cog(commands.Cog):
     def __init__(self, bot):
@@ -136,7 +137,7 @@ class music_cog(commands.Cog):
         file_path = "./../playlists/playlist.txt"
         try:
             with open(file_path, "r", encoding="utf-8") as file:
-                urls = [url.strip() for url in file if url.strip()]
+                urls = random.shuffle([url.strip() for url in file if url.strip()])
         except FileNotFoundError as e:
             logging.error(f"Playlist file not found: {e}")
             await ctx.send("Playlist file not found.")
