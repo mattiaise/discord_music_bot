@@ -137,7 +137,8 @@ class music_cog(commands.Cog):
         file_path = "./../playlists/playlist.txt"
         try:
             with open(file_path, "r", encoding="utf-8") as file:
-                urls = random.shuffle([url.strip() for url in file if url.strip()])
+                urls = [url.strip() for url in file if url.strip()]
+                random.shuffle(urls)
         except FileNotFoundError as e:
             logging.error(f"Playlist file not found: {e}")
             await ctx.send("Playlist file not found.")
