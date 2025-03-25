@@ -43,7 +43,6 @@ class music_cog(commands.Cog):
             self.is_playing = True
             m_url = self.music_queue[0][0]['source']
             self.music_queue.popleft()
-            logging.info(f"Playing next song: {m_url}")
             self.vc.play(
                 discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS),
                 after=lambda e: self.play_next()
